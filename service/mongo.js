@@ -1,10 +1,27 @@
 import mongoose from "mongoose";
 
-export async function dbConnect(){
-    try {
-        const conn = await mongoose.connect(String(process.env.MONGODB_CONNECTION_STRING));
-        return conn;
-    } catch(err) {
-        console.error(err);
+const MONGODB_URL = process.env.MONGODB_URI
+
+let cached = global.mongoose;
+
+if (!cached) {
+    cached = global.mongoose = {
+        conn: null,
+        promise: null
+    };
+}
+
+export const dbConnect = async () => {
+    if (cached.conn) {
+        return cached.conn;
     }
+
+    if (!cached.promise) {
+        cached.promise = mongoose.connect(MONGODB_URL, {
+            dbName: "e-commerce",
+            bufferCommands: false,
+        })
+    }
+    cached.conn = await cached.promise;
+    return cached.conn;
 }

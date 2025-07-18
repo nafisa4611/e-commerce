@@ -22,6 +22,8 @@ import { FaRegEyeSlash } from "react-icons/fa";
 import { FaRegEye } from "react-icons/fa6";
 import Link from "next/link";
 import { WEBSITE_LOGIN } from "@/routes/websiteRoute";
+import axios from "axios";
+import fi from "zod/v4/locales/fi.cjs";
 
 export default function registrationPage() {
     const [loading, setLoading] = useState(false);
@@ -49,7 +51,19 @@ export default function registrationPage() {
     })
 
     const handleLoginSubmit = async (values) => {
-        console.log(values);
+        try {
+            setLoading(true);
+            const {data: registerResponse} = await axios.post("/api/auth/register", values);
+            if(!registerResponse.success) {
+                throw new Error(registerResponse.message);
+            }
+            form.reset();
+            alert(registerResponse.message);
+        }catch (error) {
+            alert(error.message);
+        }finally {
+            setLoading(false);
+        }
     }
     return (
         <Card className="w-[400px]">
