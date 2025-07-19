@@ -8,7 +8,7 @@ import { SignJWT } from "jose";
 
 
 export async function POST(request) {
-    // try {
+    try {
         await dbConnect();
         const validationSchema = zSchema.pick({
             name: true,
@@ -39,22 +39,23 @@ export async function POST(request) {
         await newRegistration.save();
 
         const secret = new TextEncoder().encode(process.env.EMAIL_VERIFICATION_SECRET);
-        const token = await new SignJWT({ userId: newRegistration._id })
+        const token = await new SignJWT({ userId: newRegistration._id.toString() })
             .setIssuedAt()
             .setExpirationTime("1h")
             .setProtectedHeader({ alg: "HS256" })
             .sign(secret);
 
         await sendEmail(
-            "Email Verification",
             email,
-            emailVerificationLink(`${process.env.NEXT_PUBLIC_BASE_URL}/verifyEmail?token=${token}`)
+            "Email Verification",
+            emailVerificationLink(`${process.env.NEXT_PUBLIC_BASE_URL}/auth/verifyEmail/${token}`)
         );
 
-        return response(true, 200, "User registered successfully, Please check your email for verification." )
+
+        return response(true, 200, "User registered successfully, Please check your email for verification.")
 
 
-    // } catch (error) {
-    //     catchError(error);
-    // }
+    } catch (error) {
+        catchError(error);
+    }
 }
