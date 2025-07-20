@@ -21,9 +21,9 @@ import { useState } from "react";
 import { FaRegEyeSlash } from "react-icons/fa";
 import { FaRegEye } from "react-icons/fa6";
 import Link from "next/link";
-import { WEBSITE_LOGIN } from "@/routes/websiteRoute";
+import { WEBSITE_LOGIN } from "@/routes/WebsiteRoute";
 import axios from "axios";
-import fi from "zod/v4/locales/fi.cjs";
+import { showToast } from "@/lib/toast";
 
 export default function registrationPage() {
     const [loading, setLoading] = useState(false);
@@ -58,9 +58,9 @@ export default function registrationPage() {
                 throw new Error(registerResponse.message);
             }
             form.reset();
-            alert(registerResponse.message);
+            showToast("success",registerResponse.message);
         }catch (error) {
-            alert(error.message);
+            showToast("error",error.message);
         }finally {
             setLoading(false);
         }
