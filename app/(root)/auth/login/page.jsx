@@ -24,9 +24,11 @@ import Link from "next/link";
 import axios from "axios";
 import { showToast } from "@/lib/toast";
 import { WEBSITE_REGISTER } from "@/routes/WebsiteRoute";
+import OTPVerification from "@/components/ui/application/OTPVerification";
 
 export default function LoginPage() {
   const [loading, setLoading] = useState(false);
+  const [otpVerificationLoading, setOtpVerificationLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false)
   const [otpEmail, setOtpEmail] = useState();
 
@@ -59,6 +61,22 @@ export default function LoginPage() {
       showToast("There is some error", error.message);
     } finally {
       setLoading(false);
+    }
+  }
+
+  const handleOtpVerification = async (values) => {
+    try {
+      setOtpVerificationLoading(true);
+      const { data: registerResponse } = await axios.post("/api/auth/verify-otp", values);
+      if (!registerResponse.success) {
+        throw new Error(registerResponse.message);
+      }
+      setOtpEmail("");
+      showToast("Please check your Email", registerResponse.message);
+    } catch (error) {
+      showToast("There is some error", error.message);
+    } finally {
+      setOtpVerificationLoading(false);
     }
   }
 
@@ -147,7 +165,10 @@ export default function LoginPage() {
             </>
             :
             <>
-
+              <OTPVerification
+                email={otpEmail}
+                loading={otpVerificationLoading}
+                onSubmit={handleOtpVerification} />
             </>
         }
 
