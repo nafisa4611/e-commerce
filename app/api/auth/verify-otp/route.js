@@ -4,9 +4,7 @@ import OtpModel from "@/models/otp.model";
 import UserModel from "@/models/user.model";
 import { dbConnect } from "@/service/mongo";
 import { SignJWT } from "jose";
-import { RollerCoaster } from "lucide-react";
 import { cookies } from "next/headers";
-
 
 export async function POST(request) {
     try{
@@ -40,7 +38,7 @@ export async function POST(request) {
             avatar: getUser.avatar,
         }
 
-       const secret = new TextEncoder().encode(process.env.SECRET_KEY);
+       const secret = new TextEncoder().encode(process.env.EMAIL_VERIFICATION_SECRET);
         const token = await new SignJWT(loggedInUserData)
             .setIssuedAt()
             .setExpirationTime("1d")

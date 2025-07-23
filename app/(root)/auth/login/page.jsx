@@ -50,13 +50,13 @@ export default function LoginPage() {
   const handleLoginSubmit = async (values) => {
     try {
       setLoading(true);
-      const { data: registerResponse } = await axios.post("/api/auth/login", values);
-      if (!registerResponse.success) {
-        throw new Error(registerResponse.message);
+      const { data: loginResponse } = await axios.post("/api/auth/login", values);
+      if (!loginResponse.success) {
+        throw new Error(loginResponse.message);
       }
       setOtpEmail(values.email);
       form.reset();
-      showToast("Please check your Email", registerResponse.message);
+      showToast("Please check your Email", loginResponse.message);
     } catch (error) {
       showToast("There is some error", error.message);
     } finally {
@@ -67,12 +67,12 @@ export default function LoginPage() {
   const handleOtpVerification = async (values) => {
     try {
       setOtpVerificationLoading(true);
-      const { data: registerResponse } = await axios.post("/api/auth/verify-otp", values);
-      if (!registerResponse.success) {
-        throw new Error(registerResponse.message);
+      const { data: otpResponse } = await axios.post("/api/auth/verify-otp", values);
+      if (!otpResponse.success) {
+        throw new Error(otpResponse.message);
       }
       setOtpEmail("");
-      showToast("Please check your Email", registerResponse.message);
+      showToast("Please check your Email", otpResponse.message);
     } catch (error) {
       showToast("There is some error", error.message);
     } finally {

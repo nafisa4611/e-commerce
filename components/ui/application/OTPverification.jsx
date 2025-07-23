@@ -44,11 +44,11 @@ export default function OTPVerification({ email, onSubmit, loading }) {
     const handleResendOtp = async () => {
         try {
             setResendingOtp(true);
-            const { data: registerResponse } = await axios.post("/api/auth/resend-otp", {email});
-            if (!registerResponse.success) {
-                throw new Error(registerResponse.message);
+            const { data: resendOtpResponse } = await axios.post("/api/auth/resend-otp", { email });
+            if (!resendOtpResponse.success) {
+                throw new Error(resendOtpResponse.message);
             }
-            showToast("OTP send successfully", registerResponse.message);
+            showToast("OTP send successfully", resendOtpResponse.message);
         } catch (error) {
             showToast("There is some error", error.message);
         } finally {
@@ -72,7 +72,11 @@ export default function OTPVerification({ email, onSubmit, loading }) {
                                 <FormItem>
                                     <FormLabel className="text-bold text-2xl">One Time Password (OTP)</FormLabel>
                                     <FormControl>
-                                        <InputOTP maxLength={6}>
+                                        <InputOTP
+                                            maxLength={6}
+                                            value={field.value}
+                                            onChange={field.onChange}
+                                        >
                                             <InputOTPGroup>
                                                 <InputOTPSlot index={0} />
                                                 <InputOTPSlot index={1} />
