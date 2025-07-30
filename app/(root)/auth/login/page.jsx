@@ -1,5 +1,6 @@
 "use client"
 
+import { useRouter, useSearchParams } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { Card, CardContent } from "@/components/ui/card";
@@ -23,10 +24,17 @@ import { FaRegEye } from "react-icons/fa6";
 import Link from "next/link";
 import axios from "axios";
 import { showToast } from "@/lib/toast";
-import { WEBSITE_REGISTER } from "@/routes/WebsiteRoute";
+import { USER_DASHBOARD, WEBSITE_REGISTER, WEBSITE_RESETPASSWORD } from "@/routes/WebsiteRoute";
 import OTPVerification from "@/components/ui/application/OTPVerification";
+import { useDispatch } from "react-redux";
+import { login } from "@/store/reducer/authReducer";
+import { ADMIN_DASHBOARD } from "@/routes/AdminPanelRoute";
 
 export default function LoginPage() {
+  const dispatch = useDispatch();
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  
   const [loading, setLoading] = useState(false);
   const [otpVerificationLoading, setOtpVerificationLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false)
@@ -57,6 +65,7 @@ export default function LoginPage() {
       setOtpEmail(values.email);
       form.reset();
       showToast("Please check your Email", loginResponse.message);
+      
     } catch (error) {
       showToast("There is some error", error.message);
     } finally {
@@ -71,6 +80,17 @@ export default function LoginPage() {
       if (!otpResponse.success) {
         throw new Error(otpResponse.message);
       }
+
+      dispatch(login(otpResponse.data));
+      
+      if(searchParams.has("callback")){
+        router.push(searchParams.get("callback"));
+      }else {
+        otpResponse.data.role === "admin" ? router.push(ADMIN_DASHBOARD) : router.push(USER_DASHBOARD);
+      }
+
+      console.log("Role response", otpResponse.data.role);
+
       setOtpEmail("");
       showToast("Please check your Email", otpResponse.message);
     } catch (error) {
@@ -156,7 +176,7 @@ export default function LoginPage() {
                         <Link href={WEBSITE_REGISTER} className="text-primary underline">Create Account!</Link>
                       </div>
                       <div className="mt-2">
-                        <Link href="" className="text-primary underline">Forget Password?</Link>
+                        <Link href={WEBSITE_RESETPASSWORD} className="text-primary underline">Forget Password?</Link>
                       </div>
                     </div>
                   </form>

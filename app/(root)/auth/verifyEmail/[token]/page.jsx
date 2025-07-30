@@ -8,7 +8,7 @@ import notVerifiedImg from "@/public/assets/images/verification-failed.gif"
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { WEBSITE_HOME } from "@/routes/websiteRoute";
+import { WEBSITE_HOME } from "@/routes/WebsiteRoute";
 
 export default function emailVerificationPage({params}) {
   const { token } = use(params);

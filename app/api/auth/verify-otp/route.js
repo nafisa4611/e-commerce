@@ -44,7 +44,6 @@ export async function POST(request) {
             .setExpirationTime("1d")
             .setProtectedHeader({ alg: "HS256" })
             .sign(secret);
-
         
         const cookieStore = await cookies();
         cookieStore.set({
@@ -61,6 +60,7 @@ export async function POST(request) {
         return response(true, 200, "OTP verified successfully");
 
     }catch (error) {
+         console.error("❌ OTP Server Error:", error); // Add this line
         return catchError(error);
 
     }
